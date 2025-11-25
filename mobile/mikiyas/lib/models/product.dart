@@ -14,8 +14,8 @@ class Product {
     required this.category,
     required this.price,
     required this.imageUrl,
-    this.rating = 0.0, // Default for new products
-    this.description = 'No description provided.', // Default
-    this.sizes = const [39, 40, 41, 42], // Default
+    this.rating = 0.0,
+    this.description = 'No description provided.',
+    this.sizes = const [39, 40, 41, 42],
   });
 }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 import '../utils/constants.dart';
-
-// Assuming Product, AppColors, and AppTextStyles are defined elsewhere.
+import 'add_product_screen.dart';
 
 class DetailsScreen extends StatelessWidget {
   final Product product;
@@ -11,13 +10,50 @@ class DetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Placeholder function for product deletion logic.
     void onDelete() {
-      // Logic for deleting the product will go here
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Delete Product'),
+            content: Text('Are you sure you want to delete "${product.name}"?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Return the product with a special marker for deletion
+                  Navigator.pop(context, {'action': 'delete', 'product': product});
+                },
+                child: const Text(
+                  'Delete',
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
+            ],
+          );
+        },
+      ).then((result) {
+        if (result != null && result['action'] == 'delete') {
+          Navigator.pop(context, result);
+        }
+      });
     }
-    // Placeholder function for product update navigation.
+
     void onUpdate() {
-      // Logic for navigating to the update screen will go here
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AddProductScreen(product: product),
+        ),
+      ).then((updatedProduct) {
+        if (updatedProduct != null && updatedProduct is Product) {
+          // Return the updated product with update marker
+          Navigator.pop(context, {'action': 'update', 'product': updatedProduct});
+        }
+      });
     }
 
     return Scaffold(
@@ -30,12 +66,9 @@ class DetailsScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      // Scrollable content area.
       body: SingleChildScrollView(
         child: Center(
-          // Center the content on wider screens.
           child: ConstrainedBox(
-            // Limit the maximum width of the content block for desktop/tablet viewing.
             constraints: const BoxConstraints(
               maxWidth: 800.0,
             ),
@@ -44,14 +77,13 @@ class DetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Product Image Section: centered and constrained.
                   Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(
                         maxWidth: 600.0,
                       ),
                       child: AspectRatio(
-                        aspectRatio: 4 / 3, // Maintain image proportion.
+                        aspectRatio: 4 / 3,
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -63,7 +95,6 @@ class DetailsScreen extends StatelessWidget {
                             child: Image.asset(
                               product.imageUrl,
                               fit: BoxFit.cover,
-                              // Display a broken image icon if the image asset fails to load.
                               errorBuilder: (context, error, stackTrace) {
                                 return Center(
                                   child: Icon(
@@ -82,11 +113,9 @@ class DetailsScreen extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  // Product Name and Price Row: prevents horizontal overflow.
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Allow the product name to take up available space and truncate if necessary.
                       Expanded(
                         child: Text(
                           product.name,
@@ -96,12 +125,10 @@ class DetailsScreen extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(width: 12), // Separation between name and price.
+                      const SizedBox(width: 12),
 
-                      // Price display, which maintains its required size.
                       Row(
                         children: [
-                          // Original price with strike-through.
                           Text(
                             '\$${product.price.toInt()}',
                             style: const TextStyle(
@@ -112,7 +139,6 @@ class DetailsScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          // Calculated price (e.g., final price).
                           Text(
                             '\$${(product.price * 1.2).toInt()}',
                             style: const TextStyle(
@@ -132,12 +158,10 @@ class DetailsScreen extends StatelessWidget {
                     style: AppTextStyles.headlineMedium,
                   ),
                   const SizedBox(height: 12),
-                  // Wrap widget for displaying available sizes with appropriate spacing.
                   Wrap(
                     spacing: 12,
                     runSpacing: 12,
                     children: product.sizes.map((size) {
-                      // Styled container for each size, highlighting a selected size (e.g., 40).
                       return Container(
                         width: 60,
                         height: 40,
@@ -165,7 +189,6 @@ class DetailsScreen extends StatelessWidget {
                     style: AppTextStyles.headlineMedium,
                   ),
                   const SizedBox(height: 12),
-                  // Display the product description.
                   Text(
                     product.description,
                     style: AppTextStyles.bodyMedium,
@@ -174,10 +197,8 @@ class DetailsScreen extends StatelessWidget {
 
                   const SizedBox(height: 32),
 
-                  // Responsive button group for actions.
                   Row(
                     children: [
-                      // 1. DELETE Button: takes up half the available space.
                       Expanded(
                         child: OutlinedButton(
                           onPressed: onDelete,
@@ -201,7 +222,6 @@ class DetailsScreen extends StatelessWidget {
 
                       const SizedBox(width: 12),
 
-                      // 2. UPDATE Button: takes up the other half of the available space.
                       Expanded(
                         child: ElevatedButton(
                           onPressed: onUpdate,
@@ -225,7 +245,6 @@ class DetailsScreen extends StatelessWidget {
                     ],
                   ),
 
-                  // Add necessary padding at the bottom to clear the system's safe area (e.g., gesture bar).
                   SizedBox(height: MediaQuery.of(context).padding.bottom),
                 ],
               ),

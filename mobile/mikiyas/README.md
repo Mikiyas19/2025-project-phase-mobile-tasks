@@ -1,30 +1,53 @@
-# mikiyas
+# Ecommerce Mobile App
 
-A new Flutter project.
+A Flutter ecommerce app with complete CRUD operations and navigation features.
 
-## 🚀 Task 6: E-commerce UI Layout Implementation
+## 🚀 Task 7: Navigation & Routing Implementation
 
-This project contains the implementation of a Flutter user interface for an e-commerce application.
+This project implements complete navigation, routing, and data passing features for an e-commerce Flutter application.
 
-### UI Screenshots
+### ✅ Task Requirements Completed
 
-The following screenshots verify the replication of the application layouts:
+- **Screen Navigation** - All three screens with proper navigation
+- **Named Routes** - Route table defined and utilized throughout app
+- **Data Passing** - Product data passed between all screens
+- **Navigation Animations** - Custom slide transitions between screens
+- **Navigation Events** - Back button and navigation stack properly handled
 
-| 🏠 Home Page | 🛍️ Details Page | ➕ Add Product Page |
-|:---:|:---:|:---:|
+### 📱 App Features
 
-| ![Home Page](screenshots/home_page.jpg) | ![Details Page](screenshots/details_page.jpg) | ![Add Product Page](screenshots/add_product_page.jpg) |
----
+- **Home Screen** - Product listing with responsive grid layout
+- **Product Details** - View product details with update/delete options
+- **Add/Edit Products** - Create new products or edit existing ones
+- **Smooth Animations** - Custom slide transitions between screens
+- **Data Persistence** - Proper data passing between all screens
 
-## Getting Started
+### 🎯 Navigation Flow
 
-This project is a starting point for a Flutter application.
+- **Home → Details**: Tap any product card (with product data)
+- **Home → Add**: Tap floating action button
+- **Details → Edit**: Tap UPDATE button (with existing product data)
+- **Back Navigation**: Properly handled with animations
 
-A few resources to get you started if this is your first Flutter project:
+### 🛠️ Technical Implementation
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **Named Routes** defined in `main.dart`
+- **Custom Animations** with `PageRouteBuilder`
+- **Data Passing** using constructor parameters and return values
+- **Form Validation** with proper error handling
+- **State Management** with setState for UI updates
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 🚀 Getting Started
+
+```bash
+# Clone the repository
+git clone https://github.com/Mikiyas19/2025-project-phase-mobile-tasks.git
+
+# Navigate to project
+cd mobile/mikiyas/
+
+# Install dependencies
+flutter pub get
+
+# Run the app
+flutter run

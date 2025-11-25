@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/product.dart';
-import '../utils/constants.dart'; // Assuming AppColors and AppTextStyles are defined here
+import '../utils/constants.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -24,11 +24,9 @@ class ProductCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // START: Responsive Image Block using AspectRatio
           AspectRatio(
-            aspectRatio: 16 / 9, // Image height is 9/16ths of its width
+            aspectRatio: 16 / 9,
             child: Container(
-              // The fixed 'height: 180,' is removed
               width: double.infinity,
               decoration: const BoxDecoration(
                 color: AppColors.cardBackground,
@@ -44,7 +42,7 @@ class ProductCard extends StatelessWidget {
                 ),
                 child: Image.asset(
                   product.imageUrl,
-                  fit: BoxFit.cover, // Ensures image covers the area, scaling appropriately
+                  fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Center(
                       child: Column(
@@ -65,7 +63,6 @@ class ProductCard extends StatelessWidget {
               ),
             ),
           ),
-          // END: Responsive Image Block
 
           Padding(
             padding: const EdgeInsets.all(12.0),

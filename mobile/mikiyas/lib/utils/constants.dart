@@ -15,10 +15,11 @@ class AppTextStyles {
     fontWeight: FontWeight.bold,
     color: AppColors.textPrimary,
   );
-  static const TextStyle caption = TextStyle(
-    fontSize: 12, // Small size, typical for captions/metadata
+
+  static const caption = TextStyle(
+    fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: Colors.black, // Base color will be overridden
+    color: Colors.black,
   );
 
   static const headlineMedium = TextStyle(

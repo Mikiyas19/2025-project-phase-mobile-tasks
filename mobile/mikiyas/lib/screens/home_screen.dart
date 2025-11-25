@@ -5,8 +5,6 @@ import '../utils/constants.dart';
 import 'details_screen.dart';
 import 'add_product_screen.dart';
 
-// Assuming Product, DetailsScreen, AddProductScreen, AppColors, and AppTextStyles are defined elsewhere.
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -57,6 +55,31 @@ class _HomeScreenState extends State<HomeScreen> {
       sizes: [39, 40, 41, 42, 44],
     ),
   ];
+
+  void _handleProductDeletion(Product? productToDelete) {
+    if (productToDelete != null) {
+      setState(() {
+        products.removeWhere((p) => p.id == productToDelete.id);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${productToDelete.name} deleted')),
+      );
+    }
+  }
+
+  void _handleProductUpdate(Product? updatedProduct) {
+    if (updatedProduct != null) {
+      setState(() {
+        final index = products.indexWhere((p) => p.id == updatedProduct.id);
+        if (index != -1) {
+          products[index] = updatedProduct;
+        }
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${updatedProduct.name} updated')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +140,9 @@ class _HomeScreenState extends State<HomeScreen> {
             setState(() {
               products.add(newProduct);
             });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('${newProduct.name} added')),
+            );
           }
         },
         backgroundColor: AppColors.primary,
@@ -165,37 +191,42 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // START: Responsive GridView Implementation
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
               itemCount: products.length,
-              // This delegate controls the responsive column count
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                // Minimum required width for each column (e.g., will show 2 columns
-                // on a tablet and 1 on a phone if the phone is too narrow).
                 maxCrossAxisExtent: 180.0,
-                // Determines the height relative to the width for the grid item.
                 childAspectRatio: 1 / 1.5,
-                crossAxisSpacing: 16.0, // Horizontal space
-                mainAxisSpacing: 16.0,  // Vertical space
+                crossAxisSpacing: 16.0,
+                mainAxisSpacing: 16.0,
               ),
               itemBuilder: (context, index) {
                 return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => DetailsScreen(product: products[index]),
                       ),
                     );
+
+                    if (result != null && result is Map) {
+                      final action = result['action'];
+                      final product = result['product'];
+
+                      if (action == 'delete') {
+                        _handleProductDeletion(product);
+                      } else if (action == 'update') {
+                        _handleProductUpdate(product);
+                      }
+                    }
                   },
                   child: ProductCard(product: products[index]),
                 );
               },
             ),
           ),
-          // END: Responsive GridView Implementation
         ],
       ),
     );

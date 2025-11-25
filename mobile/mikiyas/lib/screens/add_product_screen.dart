@@ -3,7 +3,9 @@ import '../utils/constants.dart';
 import '../models/product.dart';
 
 class AddProductScreen extends StatefulWidget {
-  const AddProductScreen({super.key});
+  final Product? product;
+
+  const AddProductScreen({super.key, this.product});
 
   @override
   State<AddProductScreen> createState() => _AddProductScreenState();
@@ -18,6 +20,19 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   String? _selectedImagePath;
 
+  @override
+  void initState() {
+    super.initState();
+    if (widget.product != null) {
+      final product = widget.product!;
+      _nameController.text = product.name;
+      _categoryController.text = product.category;
+      _priceController.text = product.price.toString();
+      _descriptionController.text = product.description;
+      _selectedImagePath = product.imageUrl;
+    }
+  }
+
   void _selectImage() {
     setState(() {
       _selectedImagePath = 'assets/images/shoe1.jpg';
@@ -29,19 +44,20 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   void _submitProduct() {
     if (_formKey.currentState!.validate() && _selectedImagePath != null) {
-      final newProduct = Product(
-        id: DateTime.now().millisecondsSinceEpoch.toString(), // Unique ID
+      final product = Product(
+        id: widget.product?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
         name: _nameController.text,
         category: _categoryController.text,
         price: double.tryParse(_priceController.text) ?? 0.0,
         imageUrl: _selectedImagePath!,
-        // Added check for description length and conversion to double for price for safety
-        rating: 4.0,
-        sizes: const [40],
-        description: _descriptionController.text.isEmpty ? 'New product' : _descriptionController.text,
+        rating: widget.product?.rating ?? 4.0,
+        sizes: widget.product?.sizes ?? const [40],
+        description: _descriptionController.text.isEmpty
+            ? 'New product'
+            : _descriptionController.text,
       );
 
-      Navigator.pop(context, newProduct);
+      Navigator.pop(context, product);
     } else if (_selectedImagePath == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please tap to select an image!')),
@@ -49,11 +65,21 @@ class _AddProductScreenState extends State<AddProductScreen> {
     }
   }
 
+  void _clearForm() {
+    _nameController.clear();
+    _categoryController.clear();
+    _priceController.clear();
+    _descriptionController.clear();
+    setState(() {
+      _selectedImagePath = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Product'),
+        title: Text(widget.product != null ? 'Edit Product' : 'Add Product'),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
@@ -62,10 +88,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Center( // Centers the constrained form block
+        child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(
-              maxWidth: 600.0, // Limits the form width to 600px on large screens
+              maxWidth: 600.0,
             ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -74,12 +100,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // START: Responsive Image Upload Area
                     AspectRatio(
-                      aspectRatio: 16 / 6, // Makes it a wide, short box
+                      aspectRatio: 16 / 6,
                       child: Container(
                         width: double.infinity,
-                        // height: 150, <-- Removed fixed height
                         decoration: BoxDecoration(
                           color: AppColors.cardBackground,
                           borderRadius: BorderRadius.circular(12),
@@ -110,7 +134,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         ),
                       ),
                     ),
-                    // END: Responsive Image Upload Area
 
                     const SizedBox(height: 24),
 
@@ -131,7 +154,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
                     const SizedBox(height: 16),
 
-                    // Category
                     TextFormField(
                       controller: _categoryController,
                       decoration: const InputDecoration(
@@ -149,7 +171,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
                     const SizedBox(height: 16),
 
-                    // Price
                     TextFormField(
                       controller: _priceController,
                       decoration: const InputDecoration(
@@ -171,7 +192,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
                     const SizedBox(height: 16),
 
-                    // Description
                     TextFormField(
                       controller: _descriptionController,
                       maxLines: 4,
@@ -184,25 +204,32 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
                     const SizedBox(height: 32),
 
-                    // Submit and Delete Buttons (FIXED Layout)
                     Row(
                       children: [
                         Expanded(
                           child: OutlinedButton(
                             onPressed: () {
-                              Navigator.pop(context);
+                              if (widget.product != null) {
+                                // In edit mode, cancel and go back
+                                Navigator.pop(context);
+                              } else {
+                                // In add mode, clear the form
+                                _clearForm();
+                              }
                             },
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              side: const BorderSide(color: Colors.red),
+                              side: BorderSide(
+                                color: widget.product != null ? Colors.grey : Colors.red,
+                              ),
                             ),
-                            child: const Text(
-                              'DELETE',
+                            child: Text(
+                              widget.product != null ? 'CANCEL' : 'CLEAR',
                               style: TextStyle(
-                                color: Colors.red,
+                                color: widget.product != null ? Colors.grey : Colors.red,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -222,9 +249,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Text(
-                              'ADD',
-                              style: TextStyle(
+                            child: Text(
+                              widget.product != null ? 'UPDATE' : 'ADD',
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
